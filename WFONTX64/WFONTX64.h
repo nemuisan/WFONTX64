@@ -19,6 +19,7 @@ class CWFONTX64App : public CWinApp
 {
 public:
 	CWFONTX64App();
+	~CWFONTX64App();
 
 // オーバーライド
 public:

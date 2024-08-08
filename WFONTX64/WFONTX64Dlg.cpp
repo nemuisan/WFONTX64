@@ -221,6 +221,10 @@ HCURSOR CWFONTX64Dlg::OnQueryDragIcon()
 
 void CWFONTX64Dlg::OnClose()
 {
+	if (AfxMessageBox(_T("Are you sure?\r\nThe program will be stop."), MB_YESNO | MB_ICONQUESTION) != IDYES) {
+		return;
+	}
+
 	if (ccwp != NULL) {
 		delete ccwp;
 		ccwp = NULL;
@@ -303,6 +307,14 @@ int CWFONTX64Dlg::ChangeFont()
 		fonttype & DEVICE_FONTTYPE ? 'D' : 'G'
 	);
 	SetDlgItemText(IDD_FONTTYPE, buf);
+
+	// detect proportional font
+	if ((lf.lfPitchAndFamily & 3) == 2) {
+		IsProportioned = true;
+	}
+	else {
+		IsProportioned = false;
+	}
 
 	LOGFONT	llf = lf;
 
@@ -424,10 +436,17 @@ void CWFONTX64Dlg::OnLbnSelchangeFontlist()
 
 void CWFONTX64Dlg::OnBnClickedRun()
 {
+	if (IsProportioned) {
+		AfxMessageBox(_T("Proportional font was selected!\r\nIt may not be converted correctly!"), MB_ICONEXCLAMATION);
+	}
+
 	Convert(0);
 }
 
 void CWFONTX64Dlg::OnBnClickedNonstop()
 {
+	if (IsProportioned) {
+		AfxMessageBox(_T("Proportional font was selected!\r\nIt may not be converted correctly!"), MB_ICONEXCLAMATION);
+	}
 	Convert(1);
 }

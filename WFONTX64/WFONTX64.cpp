@@ -7,6 +7,12 @@
 #include "WFONTX64.h"
 #include "WFONTX64Dlg.h"
 
+
+CMutex multiexecmutex(FALSE, _T("CWFONTX64App"));
+CSingleLock multiexeclock(&multiexecmutex);
+
+
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -28,6 +34,15 @@ CWFONTX64App::CWFONTX64App()
 
 	// TODO: この位置に構築用コードを追加してください。
 	// ここに InitInstance 中の重要な初期化処理をすべて記述してください。
+}
+
+// デストラスタ
+
+CWFONTX64App::~CWFONTX64App()
+{
+	if (multiexeclock.IsLocked()) {
+		multiexeclock.Unlock();
+	}
 }
 
 
@@ -52,6 +67,11 @@ BOOL CWFONTX64App::InitInstance()
 
 	CWinApp::InitInstance();
 
+	// 二重起動の防止
+	if (!multiexeclock.Lock(IGNORE)) {		// 二重起動の防止
+		AfxMessageBox(_T("Duplicate Launched!"), MB_ICONSTOP);
+		return FALSE;
+	}
 
 	// ダイアログにシェル ツリー ビューまたはシェル リスト ビュー コントロールが
 	// 含まれている場合にシェル マネージャーを作成します。

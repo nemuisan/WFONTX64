@@ -63,4 +63,5 @@ public:
 	LOGFONT	lf;
 	DWORD fonttype = 0;
 	CPtrArray *ap = NULL;
+	bool IsProportioned = false;
 };
